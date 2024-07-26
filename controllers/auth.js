@@ -15,7 +15,11 @@ const login = async (req, res) => {
 
   const isMatch = await user.comparePassword(password);
   if (isMatch) {
-    res.status(200).json({ msg: "success", user });
+    res.status(200).json({
+      msg: "success",
+      user: { name: user.name, email: user.email },
+      token: await user.createJWT(user.email),
+    });
   } else {
     throw new BadRequestError("Invalid Password");
   }
@@ -29,7 +33,13 @@ const register = async (req, res) => {
   }
 
   const user = await User.create({ name, email, password });
-  res.status(201).json({ msg: "success", user });
+  res
+    .status(201)
+    .json({
+      msg: "success",
+      user: { name: user.name, email: user.email },
+      token: await user.createJWT(user.email),
+    });
 };
 
 module.exports = { login, register };
