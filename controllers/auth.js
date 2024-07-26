@@ -33,13 +33,11 @@ const register = async (req, res) => {
   }
 
   const user = await User.create({ name, email, password });
-  res
-    .status(201)
-    .json({
-      msg: "success",
-      user: { name: user.name, email: user.email },
-      token: await user.createJWT(user.email),
-    });
+  res.status(201).json({
+    msg: "success",
+    user: { name: user.name, email: user.email },
+    token: user.createJWT(user.email),
+  });
 };
 
 module.exports = { login, register };

@@ -5,13 +5,14 @@ const express = require("express");
 const app = express();
 const jobsRouter = require("./routes/jobs");
 const authRouter = require("./routes/auth");
+const authMiddleware = require("./middleware/authentication");
 
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 
 app.use(express.json());
 
-app.use("/api/v1/jobs", jobsRouter);
+app.use("/api/v1/jobs", authMiddleware, jobsRouter);
 app.use("/api/v1/auth", authRouter);
 
 app.use(notFoundMiddleware);

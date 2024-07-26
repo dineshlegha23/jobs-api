@@ -30,8 +30,11 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-UserSchema.methods.createJWT = async function (email) {
-  return await jwt.sign(email, process.env.JWT_SECRET);
+UserSchema.methods.createJWT = function (email) {
+  return jwt.sign(
+    { userId: this._id, name: this.name },
+    process.env.JWT_SECRET
+  );
 };
 
 const User = mongoose.model("User", UserSchema);
