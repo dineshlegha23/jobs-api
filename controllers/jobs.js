@@ -1,5 +1,5 @@
 const Job = require("../models/Job");
-const { BadRequestError, UnauthenticatedError } = require("../errors");
+const { BadRequestError, NotFoundError } = require("../errors");
 
 const getAllJobs = async (req, res) => {
   const {
@@ -27,7 +27,26 @@ const createJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  res.json({ msg: "working!!!" });
+  const {
+    user: { userId },
+    params: { id: jobId },
+    body: { company, position },
+  } = req;
+
+  if (!company || !position) {
+    throw new BadRequestError("Kindly provide company and position");
+  }
+
+  const job = await Job.findOneAndUpdate(
+    { _id: jobId, createdBy: userId },
+    { company, position },
+    { new: true }
+  );
+  if (!job) {
+    throw new NotFoundError("Job not found");
+  }
+  console.log(job);
+  res.json({ msg: "success", job });
 };
 
 const deleteJob = async (req, res) => {
@@ -36,14 +55,25 @@ const deleteJob = async (req, res) => {
 
   let job = await Job.findOneAndDelete({ _id: jobId, createdBy: userId });
   if (!job) {
-    throw new UnauthenticatedError("No job found");
+    throw new NotFoundError("No job found");
   }
 
   res.status(204).json();
 };
 
 const getSingleJob = async (req, res) => {
-  res.json({ msg: "working!!!" });
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req;
+
+  const job = await Job.findOne({ _id: jobId, createdBy: userId });
+
+  if (!job) {
+    throw new NotFoundError("Job not found");
+  }
+
+  res.status(200).json({ msg: "success", job });
 };
 
 module.exports = { getAllJobs, getSingleJob, deleteJob, updateJob, createJob };

@@ -25,6 +25,10 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  res.status(200).json({ msg: "logged out", user: null, token: "" });
+};
+
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -40,4 +44,4 @@ const register = async (req, res) => {
   });
 };
 
-module.exports = { login, register };
+module.exports = { login, logout, register };
