@@ -45,7 +45,6 @@ const updateJob = async (req, res) => {
   if (!job) {
     throw new NotFoundError("Job not found");
   }
-  console.log(job);
   res.json({ msg: "success", job });
 };
 
